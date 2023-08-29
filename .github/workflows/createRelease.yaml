@@ -1,9 +1,10 @@
 name: Create release on github
 
 on:
-  push:
-    tags:
-      - v*
+  workflow_dispatch:
+    inputs:
+      tagVersion:
+        required: true
 
 jobs:
   formatTag:
@@ -36,6 +37,13 @@ jobs:
         with:
           name: firefox-build
           path: ./firefox.zip
+
+      - name: Create tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await exec.exec("git tag", ["v" + "${{ github.event.inputs.message }}"])
+            await exec.exec("git push --tags")
 
       - name: Create release
         uses: ncipollo/release-action@v1

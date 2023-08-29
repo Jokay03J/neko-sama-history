@@ -47,13 +47,3 @@ jobs:
         uses: changesets/action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create tag
-        if: steps.changesets.outputs.hasChangesets == 'false'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { promises: fs } = require("fs");
-            const pkg = JSON.parse(await fs.readFile("./package.json", "utf8"))
-            await exec.exec("git tag", ["v" + pkg.version])
-            await exec.exec("git push --tags")
