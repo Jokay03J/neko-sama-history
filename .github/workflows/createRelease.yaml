@@ -47,7 +47,7 @@ jobs:
       - name: Build extension chrome extension
         run: pnpm run build
 
-      - name: Zip builded firefox extension
+      - name: Zip builded chrome extension
         run: zip chrome ./dist -r
 
       - name: Upload builded chrome extension
@@ -60,10 +60,10 @@ jobs:
         run: echo PLATFORM_TARGET="firefox" > .env
 
       - name: Build extension firefox extension
-        run: pnpm run build -r
+        run: pnpm run build
 
       - name: Zip builded firefox extension
-        run: zip firefox ./dist
+        run: zip firefox ./dist -r
 
       - name: Upload builded firefox extension
         uses: actions/upload-artifact@v3
