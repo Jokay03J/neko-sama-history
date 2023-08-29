@@ -38,7 +38,7 @@ jobs:
           path: ./firefox.zip
 
       - name: Create release
-      - uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1
         with:
           artifacts: "chrome.zip,firefox.zip"
           body: "If you want know changelog go [here](https://github.com/Jokay03J/neko-sama-history/blob/main/CHANGELOG.md)"
