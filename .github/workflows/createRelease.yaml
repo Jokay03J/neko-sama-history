@@ -7,7 +7,7 @@ on:
         required: true
 
 jobs:
-  formatTag:
+  createRelease:
     runs-on: ubuntu-latest
 
     steps:
@@ -66,14 +66,13 @@ jobs:
           path: ./firefox.zip
 
       - name: Create tag
-        uses: actions/github-script@v6
-        with:
-          script: |
-            await exec.exec("git tag", ["v" + "${{ github.event.inputs.message }}"])
-            await exec.exec("git push --tags")
+        run: |
+          git tag v${{ inputs.tagVersion }}
+          git push --tags
 
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
+          tag: v${{ inputs.tagVersion }}
           artifacts: "chrome.zip,firefox.zip"
           body: "If you want know changelog go [here](https://github.com/Jokay03J/neko-sama-history/blob/main/CHANGELOG.md)"
