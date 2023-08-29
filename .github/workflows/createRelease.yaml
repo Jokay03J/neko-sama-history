@@ -3,7 +3,7 @@ name: Create release on github
 on:
   push:
     tags:
-      - v**
+      - v*
 
 jobs:
   formatTag:
