@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Create Release Pull Request
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: echo "ready to be builded and published !"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Build extension chrome extension
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          echo PLATFORM_TARGET="chrome" > .env
+          pnpm run build
+          zip chrome ./dist
+
+      - name: Upload builded chrome extension
+        uses: actions/upload-artifact@v3
+        with:
+          name: chrome-build
+          path: ./chrome.zip
+
+      - name: Build extension firefox extension
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          echo PLATFORM_TARGET="firefox" > .env
+          pnpm run build
+          zip firefox ./dist
+
+      - name: Upload builded firefox extension
+        uses: actions/upload-artifact@v3
+        with:
+          name: chrome-build
+          path: ./firefox.zip
