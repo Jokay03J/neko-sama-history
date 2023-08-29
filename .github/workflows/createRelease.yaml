@@ -41,11 +41,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Set chrome platform target
+        run: echo PLATFORM_TARGET="chrome" > .env
+
       - name: Build extension chrome extension
-        run: |
-          echo PLATFORM_TARGET="chrome" > .env
-          pnpm run build
-          zip chrome ./dist
+        run: pnpm run build
+
+      - name: Zip builded firefox extension
+        run: zip chrome ./dist
 
       - name: Upload builded chrome extension
         uses: actions/upload-artifact@v3
@@ -53,11 +56,14 @@ jobs:
           name: chrome-build
           path: ./chrome.zip
 
+      - name: Set firefox platform target
+        run: echo PLATFORM_TARGET="firefox" > .env
+
       - name: Build extension firefox extension
-        run: |
-          echo PLATFORM_TARGET="firefox" > .env
-          pnpm run build
-          zip firefox ./dist
+        run: pnpm run build
+
+      - name: Zip builded firefox extension
+        run: zip firefox ./dist
 
       - name: Upload builded firefox extension
         uses: actions/upload-artifact@v3
