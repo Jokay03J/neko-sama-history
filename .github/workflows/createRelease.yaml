@@ -1,0 +1,84 @@
+name: Create release on github
+
+on:
+  workflow_dispatch:
+    inputs:
+      tagVersion:
+        required: true
+
+jobs:
+  createRelease:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Set chrome platform target
+        run: echo PLATFORM_TARGET="chrome" > .env
+
+      - name: Build extension chrome extension
+        run: pnpm run build
+
+      - name: Zip builded chrome extension
+        run: zip chrome ./dist -r
+
+      - name: Upload builded chrome extension
+        uses: actions/upload-artifact@v3
+        with:
+          name: chrome-build
+          path: ./chrome.zip
+
+      - name: Set firefox platform target
+        run: echo PLATFORM_TARGET="firefox" > .env
+
+      - name: Build extension firefox extension
+        run: pnpm run build
+
+      - name: Zip builded firefox extension
+        run: zip firefox ./dist -r
+
+      - name: Upload builded firefox extension
+        uses: actions/upload-artifact@v3
+        with:
+          name: firefox-build
+          path: ./firefox.zip
+
+      - name: Create tag
+        run: |
+          git tag v${{ inputs.tagVersion }}
+          git push --tags
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ inputs.tagVersion }}
+          artifacts: "chrome.zip,firefox.zip"
+          body: "If you want know changelog go [here](https://github.com/Jokay03J/neko-sama-history/blob/main/CHANGELOG.md)"

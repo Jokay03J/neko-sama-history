@@ -45,34 +45,5 @@ jobs:
       - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
-        with:
-          publish: echo "ready to be builded and published !"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Build extension chrome extension
-        if: steps.changesets.outputs.published == 'true'
-        run: |
-          echo PLATFORM_TARGET="chrome" > .env
-          pnpm run build
-          zip chrome ./dist
-
-      - name: Upload builded chrome extension
-        uses: actions/upload-artifact@v3
-        with:
-          name: chrome-build
-          path: ./chrome.zip
-
-      - name: Build extension firefox extension
-        if: steps.changesets.outputs.published == 'true'
-        run: |
-          echo PLATFORM_TARGET="firefox" > .env
-          pnpm run build
-          zip firefox ./dist
-
-      - name: Upload builded firefox extension
-        uses: actions/upload-artifact@v3
-        with:
-          name: chrome-build
-          path: ./firefox.zip
