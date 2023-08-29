@@ -51,8 +51,9 @@ jobs:
       - name: Create tag
         if: steps.changesets.outputs.hasChangesets == 'false'
         uses: actions/github-script@v6
-        script: |
-          const { promises: fs } = require("fs");
-          const pkg = JSON.parse(await fs.readFile("./package.json", "utf8"))
-          await exec.exec("git tag", ["v" + pkg.version])
-          await exec.exec("git push --tags")
+        with:
+          script: |
+            const { promises: fs } = require("fs");
+            const pkg = JSON.parse(await fs.readFile("./package.json", "utf8"))
+            await exec.exec("git tag", ["v" + pkg.version])
+            await exec.exec("git push --tags")
