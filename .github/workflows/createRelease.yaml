@@ -1,0 +1,40 @@
+name: Create release on github
+on:
+  tag:
+    - "v*"
+
+jobs:
+  formatTag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build extension chrome extension
+        run: |
+          echo PLATFORM_TARGET="chrome" > .env
+          pnpm run build
+          zip chrome ./dist
+
+      - name: Upload builded chrome extension
+        uses: actions/upload-artifact@v3
+        with:
+          name: chrome-build
+          path: ./chrome.zip
+
+      - name: Build extension firefox extension
+        run: |
+          echo PLATFORM_TARGET="firefox" > .env
+          pnpm run build
+          zip firefox ./dist
+
+      - name: Upload builded firefox extension
+        uses: actions/upload-artifact@v3
+        with:
+          name: firefox-build
+          path: ./firefox.zip
+
+      - name: Create release
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "chrome.zip,firefox.zip"
+          body: "If you want know changelog go [here](https://github.com/Jokay03J/neko-sama-history/blob/main/CHANGELOG.md)"
