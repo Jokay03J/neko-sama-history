@@ -42,7 +42,8 @@ const manifest = {
   },
   browser_specific_settings: {
     gecko: {
-      strict_min_version: "58",
+      id: "neko-sama-history@jokay03j.fr",
+      strict_min_version: "109.0",
     },
   },
 };
