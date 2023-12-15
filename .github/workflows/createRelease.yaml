@@ -51,7 +51,7 @@ jobs:
         run: zip chrome ./dist -r
 
       - name: Upload builded chrome extension
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: chrome-build
           path: ./chrome.zip
@@ -66,7 +66,7 @@ jobs:
         run: zip firefox ./dist -r
 
       - name: Upload builded firefox extension
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firefox-build
           path: ./firefox.zip
