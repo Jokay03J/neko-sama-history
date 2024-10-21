@@ -16,7 +16,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
     "@samrum/vite-plugin-web-extension": "^5.0.0",
-    "@types/chrome": "^0.0.268",
+    "@types/chrome": "^0.0.279",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.1",
     "@types/webextension-polyfill": "^0.10.0",
